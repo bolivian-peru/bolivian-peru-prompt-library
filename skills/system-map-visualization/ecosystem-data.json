@@ -1,0 +1,43 @@
+{
+  "_note": "EXAMPLE ONLY — a generic 3-tier web app so `node gen-diagram.mjs` runs out of the box. Replace this entire file with one generated from YOUR real codebase per SKILL.md. No mock data in production: every node/edge must be verified against real source.",
+  "summary": "Example: a generic web application — browser SPA → REST API → Postgres + Redis, with a worker and an object store. Replace with your real, code-verified system.",
+  "groups": [
+    { "id": "edge", "label": "Edge / Ingress", "color": "#4c9aff", "blurb": "Public-facing entrypoints — CDN, load balancer, API gateway." },
+    { "id": "app", "label": "Application", "color": "#bc8cff", "blurb": "Backend services, workers, and business logic." },
+    { "id": "data", "label": "Datastores", "color": "#d29922", "blurb": "Primary DB, cache, and object storage." },
+    { "id": "client", "label": "Clients", "color": "#56d364", "blurb": "Browsers, mobile apps, and SDKs that call the API." }
+  ],
+  "nodes": [
+    { "id": "cdn", "label": "CDN / LB", "group": "edge", "status": "operational", "sublabel": "nginx 443", "detail": "Terminates TLS and routes traffic to the API and static assets." },
+    { "id": "api", "label": "REST API", "group": "app", "status": "operational", "sublabel": "Node/Express :3000", "detail": "Public REST API serving the SPA and mobile clients." },
+    { "id": "worker", "label": "Background Worker", "group": "app", "status": "operational", "sublabel": "queue consumer", "detail": "Processes async jobs off the queue (email, exports, webhooks)." },
+    { "id": "auth", "label": "Auth Service", "group": "app", "status": "operational", "sublabel": "JWT + sessions", "detail": "Issues and validates credentials for the API." },
+    { "id": "pg", "label": "PostgreSQL", "group": "data", "status": "operational", "sublabel": "primary store", "detail": "System of record for users and domain entities." },
+    { "id": "redis", "label": "Redis", "group": "data", "status": "operational", "sublabel": "cache + queue", "detail": "Session cache, rate-limit counters, and the job queue." },
+    { "id": "blob", "label": "Object Store", "group": "data", "status": "operational", "sublabel": "S3-compatible", "detail": "Uploads, exports, and static media." },
+    { "id": "spa", "label": "Web App (SPA)", "group": "client", "status": "operational", "sublabel": "React", "detail": "Browser dashboard that calls the REST API." },
+    { "id": "sdk", "label": "Client SDK", "group": "client", "status": "beta", "sublabel": "TS/JS", "detail": "Typed client published for third-party integrations." }
+  ],
+  "links": [
+    { "source": "cdn", "target": "api", "kind": "control", "label": "443 → :3000" },
+    { "source": "api", "target": "auth", "kind": "auth", "label": "verify token" },
+    { "source": "api", "target": "pg", "kind": "data", "label": "reads/writes" },
+    { "source": "api", "target": "redis", "kind": "data", "label": "cache + enqueue" },
+    { "source": "api", "target": "blob", "kind": "data", "label": "signed uploads" },
+    { "source": "worker", "target": "redis", "kind": "data", "label": "dequeue jobs" },
+    { "source": "worker", "target": "pg", "kind": "data", "label": "writes results" },
+    { "source": "auth", "target": "pg", "kind": "data", "label": "user lookup" },
+    { "source": "spa", "target": "cdn", "kind": "control", "label": "HTTPS" },
+    { "source": "sdk", "target": "api", "kind": "control", "label": "REST" }
+  ],
+  "liveEndpoints": [
+    { "url": "https://api.example.com/health", "method": "GET", "returns": "{ status, components } — status only", "safe": true, "mapsTo": "api up/down dot" }
+  ],
+  "productionReadiness": [
+    { "rank": 1, "area": "Client SDK", "status": "partial", "severity": "P2", "why": "SDK is beta and not yet published to the registry.", "nextStep": "Publish v1.0 and add CI release." }
+  ],
+  "headlineStats": [
+    { "label": "Services", "value": "4", "live": false, "note": "static fact" },
+    { "label": "Datastores", "value": "3", "live": false, "note": "static fact" }
+  ]
+}
