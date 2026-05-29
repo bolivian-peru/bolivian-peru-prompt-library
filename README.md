@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/social-preview.png" alt="bolivian-peru prompt library — free, production-grade AI skills & explainers" width="820" />
+
 # bolivian-peru prompt library
 
 **Free, production-grade AI skills & explainers — battle-tested on real software, not toy demos.**

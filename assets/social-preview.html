@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1280px; height:640px; overflow:hidden; }
+  body { background:#05070d; font-family:'IBM Plex Mono',monospace; color:#c5d2e6; position:relative; }
+  .glow { position:absolute; border-radius:50%; filter:blur(85px); mix-blend-mode:screen; }
+  .g1 { width:660px; height:660px; left:-180px; top:-220px; background:radial-gradient(circle,rgba(40,90,180,0.6),transparent 62%); }
+  .g2 { width:600px; height:600px; right:-170px; bottom:-240px; background:radial-gradient(circle,rgba(20,130,140,0.55),transparent 62%); }
+  .g3 { width:440px; height:440px; left:600px; top:320px; background:radial-gradient(circle,rgba(150,80,200,0.30),transparent 64%); }
+  .grid { position:absolute; inset:0; opacity:0.4;
+    background-image:linear-gradient(rgba(90,140,210,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(90,140,210,0.07) 1px,transparent 1px);
+    background-size:48px 48px; -webkit-mask-image:radial-gradient(ellipse 92% 86% at 46% 45%,#000 30%,transparent 90%); }
+  .vig { position:absolute; inset:0; background:radial-gradient(ellipse 80% 78% at 46% 42%,transparent 42%,rgba(2,4,9,0.8)); }
+  svg.net { position:absolute; right:62px; top:96px; width:600px; height:470px; }
+  .node { filter:drop-shadow(0 0 9px currentColor); }
+  .content { position:absolute; left:70px; top:0; height:640px; width:660px; display:flex; flex-direction:column; justify-content:center; z-index:3; }
+  .kicker { display:inline-flex; align-items:center; gap:10px; font-size:15px; letter-spacing:0.22em; text-transform:uppercase; color:#39c5cf; font-weight:500; margin-bottom:20px; }
+  .kicker .dot { width:9px; height:9px; border-radius:50%; background:#3fb950; box-shadow:0 0 12px #3fb950; }
+  h1 { font-family:'Chakra Petch',sans-serif; font-weight:700; font-size:72px; line-height:0.98; color:#eef4ff; letter-spacing:0.01em; }
+  h1 .c { color:#39c5cf; }
+  .sub { font-size:19px; line-height:1.55; color:#9fb0c8; margin-top:24px; max-width:560px; }
+  .sub b { color:#eef4ff; font-weight:500; }
+  .chips { display:flex; gap:10px; margin-top:30px; flex-wrap:wrap; }
+  .chip { font-size:14px; letter-spacing:0.04em; color:#c5d2e6; padding:8px 16px; border-radius:22px; border:1px solid rgba(120,160,220,0.25); background:rgba(120,160,220,0.06); }
+  .chip b { color:#39c5cf; font-family:'Chakra Petch',sans-serif; font-weight:600; }
+  .repo { position:absolute; left:70px; bottom:44px; z-index:3; font-size:16px; letter-spacing:0.04em; color:#62728c; }
+  .repo b { color:#eef4ff; }
+  .badge { position:absolute; right:62px; bottom:42px; z-index:3; font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:15px; letter-spacing:0.08em; color:#d29922; }
+</style></head>
+<body>
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+  <div class="grid"></div>
+  <svg class="net" viewBox="0 0 600 470">
+    <g stroke-width="1.5" opacity="0.5">
+      <line x1="300" y1="55"  x2="160" y2="175" stroke="#4c9aff"/>
+      <line x1="300" y1="55"  x2="440" y2="160" stroke="#39c5cf"/>
+      <line x1="160" y1="175" x2="95"  y2="310" stroke="#bc8cff"/>
+      <line x1="160" y1="175" x2="280" y2="255" stroke="#d29922"/>
+      <line x1="440" y1="160" x2="510" y2="300" stroke="#3fb950"/>
+      <line x1="440" y1="160" x2="320" y2="255" stroke="#39c5cf"/>
+      <line x1="280" y1="255" x2="320" y2="255" stroke="#d29922"/>
+      <line x1="280" y1="255" x2="215" y2="395" stroke="#3fb950"/>
+      <line x1="320" y1="255" x2="405" y2="405" stroke="#f85149"/>
+      <line x1="95"  y1="310" x2="215" y2="395" stroke="#bc8cff"/>
+      <line x1="510" y1="300" x2="405" y2="405" stroke="#3fb950"/>
+    </g>
+    <g class="node">
+      <circle cx="300" cy="55"  r="16" fill="#4c9aff" color="#4c9aff"/>
+      <circle cx="160" cy="175" r="13" fill="#bc8cff" color="#bc8cff"/>
+      <circle cx="440" cy="160" r="14" fill="#39c5cf" color="#39c5cf"/>
+      <circle cx="95"  cy="310" r="11" fill="#bc8cff" color="#bc8cff"/>
+      <circle cx="280" cy="255" r="15" fill="#d29922" color="#d29922"/>
+      <circle cx="320" cy="255" r="12" fill="#39c5cf" color="#39c5cf"/>
+      <circle cx="510" cy="300" r="13" fill="#3fb950" color="#3fb950"/>
+      <circle cx="215" cy="395" r="14" fill="#3fb950" color="#3fb950"/>
+      <circle cx="405" cy="405" r="12" fill="#f85149" color="#f85149"/>
+    </g>
+  </svg>
+  <div class="vig"></div>
+  <div class="content">
+    <span class="kicker"><span class="dot"></span>BOLIVIAN-PERU · FREE &amp; OPEN-SOURCE</span>
+    <h1>Prompt<br/><span class="c">Library</span></h1>
+    <div class="sub">Production-grade <b>AI skills &amp; explainers</b>, battle-tested on real software. Drop into Claude Code, Cursor, or any agent. <b>No mock data. No fluff.</b></div>
+    <div class="chips">
+      <span class="chip"><b>skills</b></span>
+      <span class="chip"><b>explainers</b></span>
+      <span class="chip">Anthropic format</span>
+      <span class="chip">MIT</span>
+    </div>
+  </div>
+  <div class="repo">▶ github.com/bolivian-peru<b>/bolivian-peru-prompt-library</b></div>
+  <div class="badge">★ FREE</div>
+</body></html>
