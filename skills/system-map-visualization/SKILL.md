@@ -31,7 +31,7 @@ Build two artifacts for **any** software project, from one source of truth:
 
 Both are driven by one file, **`ecosystem-data.json`** — the only thing you produce per
 project. The HTML/CSS/JS is project-agnostic: re-skin tokens, point the live endpoints at
-the project's API. A reference, live build: <https://agents.proxies.sx/system-map/>.
+the project's API.
 
 ---
 

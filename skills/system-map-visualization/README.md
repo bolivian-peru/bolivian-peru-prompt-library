@@ -3,9 +3,6 @@
 Build a **live, animated 3D WebGL system map** + a **static PlantUML architecture diagram**
 of any software project — from one code-verified data file. No mock data, no fluff.
 
-**Live reference build:** <https://agents.proxies.sx/system-map/>
-([diagram](https://agents.proxies.sx/system-map/diagram.html))
-
 ## Files
 
 | File | What it is |

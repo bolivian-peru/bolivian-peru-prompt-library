@@ -32,9 +32,9 @@ Every skill here follows two non-negotiable principles:
 
 ## Skills
 
-| Skill | What it does | Live example |
-|---|---|---|
-| [**system-map-visualization**](skills/system-map-visualization/) | Deeply analyzes any codebase, then builds a **live, animated 3D WebGL "system map"** of the whole ecosystem **+ a static PlantUML architecture diagram**, both from one code-verified data file. Real-time telemetry, clickable nodes, guided end-to-end journeys. No backend of its own — one static HTML file. | [agents.proxies.sx/system-map](https://agents.proxies.sx/system-map/) |
+| Skill | What it does |
+|---|---|
+| [**system-map-visualization**](skills/system-map-visualization/) | Deeply analyzes any codebase, then builds a **live, animated 3D WebGL "system map"** of the whole ecosystem **+ a static PlantUML architecture diagram**, both from one code-verified data file. Real-time telemetry, clickable nodes, guided end-to-end journeys. No backend of its own — one self-contained static HTML file. |
 
 _More coming. Watch / star the repo._
 
@@ -63,10 +63,9 @@ to apply it to your repository (give it file access via your tool layer).
 
 ## Why these exist
 
-These come out of building [Proxies.sx](https://proxies.sx) — a mobile-proxy + AI-agent
-infrastructure platform. When we solve something cleanly enough that it generalizes, we
-extract the reusable core and publish it here, free, MIT. Use it, fork it, ship it. No
-attribution required.
+These come out of real production work. When something gets solved cleanly enough to
+generalize, the reusable core is extracted and published here — free, MIT. Use it, fork it,
+ship it. No attribution required.
 
 If a skill saved you time, a ⭐ is appreciated — it tells us which ones to keep investing in.
 
@@ -82,4 +81,4 @@ agent can execute it end-to-end without hand-holding.
 
 ## License
 
-MIT © 2026 bolivian-peru / Proxies.sx — see [LICENSE](LICENSE). Do whatever you want.
+MIT © 2026 bolivian-peru — see [LICENSE](LICENSE). Do whatever you want.
