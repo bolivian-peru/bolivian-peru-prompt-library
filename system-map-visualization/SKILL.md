@@ -279,29 +279,34 @@ Generated from the SAME `ecosystem-data.json` (can't drift). The included genera
 `diagram.html` shows it with `svg-pan-zoom`.
 
 **Use the bundled [`gen-diagram.mjs`](./gen-diagram.mjs)** (in this folder), generic via a
-`PROJECT_TITLE` env var. It renders at the **subsystem altitude**: one box per subsystem that
-*lists its components as text*, with cross-subsystem flows aggregated to one coloured edge per
-directed pair (ranked `payment > bandwidth > sales > auth > data > control`; `infra` dropped).
+`PROJECT_TITLE` env var. It renders **one box per component**, grouped into subsystem packages,
+with the *meaningful* cross-subsystem flows (drops the dense `control`/`infra` fan-outs so it's
+legible). Each package wraps its nodes into a narrow grid (`COLS`) and the packages are stacked
+top→bottom in request→infra order, giving a balanced shape. Dark theme, big fonts, exact
+PlantUML raw-deflate + custom-base64 URL encoding included.
 
-**Why subsystem-level, not one box per component:** a large system (say 70+ components) drawn
-as one-box-each becomes a wide ribbon whose text shrinks to ~6px when fit to a screen —
-unreadable without zooming. Dozens of labelled boxes simply can't be read at full-fit. The
-subsystem view stays readable on first view (a handful of boxes, portrait shape that fits to
-width and scrolls), still names every component, and leaves the full per-component, zoomable
-detail to the live WebGL map (Artifact A). Set `PROJECT_TITLE`, dark theme, big fonts, exact
-PlantUML raw-deflate + custom-base64 URL encoding all included.
+**The aspect-ratio lever.** A many-node diagram can become a wide ribbon whose text is tiny
+when fit to a screen. Two levers fix it: (1) the grid-wrap + vertical stack above keeps the
+shape balanced rather than a 3:1 strip; (2) — most important — the *viewer* fits the WHOLE
+diagram into one view on load, so you see all of it at once and zoom in only for label detail
+(don't try to make every label readable at full-fit; that's the live WebGL map's job).
 
-> **Creole gotcha:** keep every `<color>`/`<size>`/`<b>` tag opened AND closed on the SAME
-> line. A span that crosses a `\n` leaks its closing tags as literal text in the render.
+> **Creole gotcha** (if you ever put rich text in a box): keep every `<color>`/`<size>`/`<b>`
+> tag opened AND closed on the SAME line — a span that crosses a `\n` leaks its closing tags
+> as literal text in the render.
 
 ```bash
 node gen-diagram.mjs                                                  # → ecosystem.puml + url file
 curl -s "$(cat ecosystem-plantuml-url.txt)" -o ecosystem-diagram.svg  # self-host (no runtime CDN dep)
 ```
 
-`diagram.html` fetches `./ecosystem-diagram.svg`, injects it inline (strip `width`/`height`),
-and `svgPanZoom(el, { fit:true, center:true, controlIconsEnabled:true, minZoom:0.2, maxZoom:18 })`.
-Cross-link it with the live map.
+`diagram.html` fetches `./ecosystem-diagram.svg`, injects it inline (strip `width`/`height`,
+set `style.width/height = 100%`), then `svgPanZoom(el, { fit:true, center:true,
+controlIconsEnabled:true, minZoom:0.05, maxZoom:40 })`. **Re-fit after layout settles** — `fit`
+at init often runs before the container has its size — by calling `pz.resize(); pz.updateBBox();
+pz.fit(); pz.center();` on `requestAnimationFrame`, a `setTimeout(…,200)`, and the window
+`resize` event. This is what guarantees the whole diagram lands in one view. Cross-link it with
+the live map.
 
 ---
 

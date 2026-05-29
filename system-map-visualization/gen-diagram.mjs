@@ -48,37 +48,43 @@ p += "skinparam package {\n  BorderColor #34406a\n  BorderThickness 1.6\n  FontC
 p += "skinparam rectangle {\n  BorderColor #34406a\n  FontColor #eaf2ff\n  FontSize 16\n  roundCorner 12\n}\n";
 p += `title <color:#eef4ff><size:22>${PROJECT_TITLE} — Ecosystem (analysed)</size></color>\\n<color:#62728c><size:14>${data.nodes.length} components · ${data.groups.length} subsystems · meaningful cross-subsystem flows, colored by kind</size></color>\n\n`;
 
-// SUBSYSTEM-LEVEL "analysed" view. 73 individual boxes can't be read when fit to a
-// screen (text shrinks to ~6px), so the static diagram works at the subsystem altitude:
-// ONE box per subsystem that LISTS its components as text, with aggregated cross-subsystem
-// flows between boxes. Readable on first view (9 boxes), still names every component; the
-// interactive 73-node detail is the job of the live WebGL map.
+// COMPONENT-LEVEL "analysed" view: one box per component, grouped in subsystem packages —
+// accurate and complete. Each package wraps its nodes into a narrow grid (COLS wide) and the
+// packages are stacked top→bottom in request→infra order, giving a balanced shape that the
+// viewer fits whole into one screen (zoom in for label detail).
+const COLS = 4;
 data.groups.forEach((g) => {
   const nodes = nodesByGroup[g.id] || [];
   if (!nodes.length) return;
-  // Keep every creole/HTML tag opened AND closed on the SAME line — a color/size span
-  // that crosses a \n leaks its closing tags as literal text in the render.
-  const comps = nodes.map((n) => n.label).join("\\n");
-  const title = `<size:18><b>${g.label}</b></size>  <color:#7d8ca5>· ${nodes.length}</color>`;
-  p += `rectangle "${title}\\n${comps}" as ${galias(g.id)} ${g.color}1E\n`;
+  p += `package "${g.label}" as ${galias(g.id)} ${g.color}22 {\n`;
+  nodes.forEach((n) => {
+    p += `  rectangle "${n.label}" as ${alias(n.id)} ${g.color}1A\n`;
+  });
+  for (let i = 0; i + COLS < nodes.length; i++) {
+    p += `  ${alias(nodes[i].id)} -[hidden]-> ${alias(nodes[i + COLS].id)}\n`;
+  }
+  p += "}\n\n";
 });
-p += "\n";
 
-// Aggregate cross-subsystem flows to one edge per directed subsystem pair, coloured by
-// the highest-signal kind on that pair. Drop pure deployment (infra) noise.
-const KIND_RANK = { payment: 6, bandwidth: 5, sales: 4, auth: 3, data: 2, control: 1, infra: 0 };
-const pair = new Map();   // "src>tgt" -> best kind
-data.links.forEach((l) => {
-  const sg = groupOf[l.source], tg = groupOf[l.target];
-  if (sg === tg || l.kind === "infra") return;
-  const key = sg + ">" + tg;
-  const cur = pair.get(key);
-  if (!cur || (KIND_RANK[l.kind] || 0) > (KIND_RANK[cur] || 0)) pair.set(key, l.kind);
-});
-for (const [key, kind] of pair) {
-  const [sg, tg] = key.split(">");
-  p += `${galias(sg)} -[${KIND_COLOR[kind] || "#46506a"}]-> ${galias(tg)}\n`;
+// Stack subsystems vertically (request→infra) for a balanced, one-view shape.
+const STACK_ORDER = ["sdk", "frontend", "client", "edge", "gateway", "backend", "payment", "relay", "datastore", "infra"];
+const stacked = STACK_ORDER.filter((id) => (nodesByGroup[id] || []).length);
+for (let i = 0; i < stacked.length - 1; i++) {
+  const a = nodesByGroup[stacked[i]], b = nodesByGroup[stacked[i + 1]];
+  p += `${alias(a[a.length - 1].id)} -[hidden]-> ${alias(b[0].id)}\n`;
 }
+
+// Meaningful cross-subsystem flows only (drop the dense control/infra fan-outs).
+const SKIP_KINDS = new Set(["control", "infra"]);
+const pair = new Set();
+data.links.forEach((l) => {
+  if (groupOf[l.source] === groupOf[l.target]) return;
+  if (SKIP_KINDS.has(l.kind)) return;
+  const key = l.source + ">" + l.target;
+  if (pair.has(key)) return;
+  pair.add(key);
+  p += `${alias(l.source)} -[${KIND_COLOR[l.kind] || "#46506a"}]-> ${alias(l.target)}\n`;
+});
 p += "@enduml\n";
 
 fs.writeFileSync(new URL("./ecosystem.puml", import.meta.url), p);
