@@ -37,7 +37,7 @@ p += "skinparam shadowing false\n";
 p += "skinparam defaultFontName monospace\n";
 p += "skinparam defaultFontColor #d6e2f5\n";
 p += "skinparam defaultFontSize 17\n";                 // was 11 — much more legible
-p += "skinparam nodesep 26\n";                         // breathing room between nodes
+p += "skinparam nodesep 16\n";                         // breathing room between nodes
 p += "skinparam ranksep 70\n";                         // taller layout, clearer ranks
 p += "skinparam ArrowThickness 1.4\n";
 p += "skinparam ArrowColor #4a5878\n";
@@ -48,31 +48,37 @@ p += "skinparam package {\n  BorderColor #34406a\n  BorderThickness 1.6\n  FontC
 p += "skinparam rectangle {\n  BorderColor #34406a\n  FontColor #eaf2ff\n  FontSize 16\n  roundCorner 12\n}\n";
 p += `title <color:#eef4ff><size:22>${PROJECT_TITLE} — Ecosystem (analysed)</size></color>\\n<color:#62728c><size:14>${data.nodes.length} components · ${data.groups.length} subsystems · meaningful cross-subsystem flows, colored by kind</size></color>\n\n`;
 
+// SUBSYSTEM-LEVEL "analysed" view. 73 individual boxes can't be read when fit to a
+// screen (text shrinks to ~6px), so the static diagram works at the subsystem altitude:
+// ONE box per subsystem that LISTS its components as text, with aggregated cross-subsystem
+// flows between boxes. Readable on first view (9 boxes), still names every component; the
+// interactive 73-node detail is the job of the live WebGL map.
 data.groups.forEach((g) => {
   const nodes = nodesByGroup[g.id] || [];
   if (!nodes.length) return;
-  p += `package "${g.label}" as ${galias(g.id)} ${g.color}22 {\n`;
-  nodes.forEach((n) => {
-    p += `  rectangle "${n.label}" as ${alias(n.id)} ${g.color}1A\n`;
-  });
-  p += "}\n\n";
+  // Keep every creole/HTML tag opened AND closed on the SAME line — a color/size span
+  // that crosses a \n leaks its closing tags as literal text in the render.
+  const comps = nodes.map((n) => n.label).join("\\n");
+  const title = `<size:18><b>${g.label}</b></size>  <color:#7d8ca5>· ${nodes.length}</color>`;
+  p += `rectangle "${title}\\n${comps}" as ${galias(g.id)} ${g.color}1E\n`;
 });
+p += "\n";
 
-/* draw only the MEANINGFUL cross-subsystem edges — intra-subsystem structure is
-   implied by the package box, and the dense 'control'/'infra' fan-outs (every
-   module→datastore, every portal→api, everything→server) are dropped so the
-   analysed view stays legible instead of a hairball */
-const SKIP_KINDS = new Set(["control", "infra"]);
-const seen = new Set();
+// Aggregate cross-subsystem flows to one edge per directed subsystem pair, coloured by
+// the highest-signal kind on that pair. Drop pure deployment (infra) noise.
+const KIND_RANK = { payment: 6, bandwidth: 5, sales: 4, auth: 3, data: 2, control: 1, infra: 0 };
+const pair = new Map();   // "src>tgt" -> best kind
 data.links.forEach((l) => {
-  if (groupOf[l.source] === groupOf[l.target]) return;
-  if (SKIP_KINDS.has(l.kind)) return;
-  const key = l.source + ">" + l.target;
-  if (seen.has(key)) return;
-  seen.add(key);
-  const color = KIND_COLOR[l.kind] || "#46506a";
-  p += `${alias(l.source)} -[${color}]-> ${alias(l.target)}\n`;
+  const sg = groupOf[l.source], tg = groupOf[l.target];
+  if (sg === tg || l.kind === "infra") return;
+  const key = sg + ">" + tg;
+  const cur = pair.get(key);
+  if (!cur || (KIND_RANK[l.kind] || 0) > (KIND_RANK[cur] || 0)) pair.set(key, l.kind);
 });
+for (const [key, kind] of pair) {
+  const [sg, tg] = key.split(">");
+  p += `${galias(sg)} -[${KIND_COLOR[kind] || "#46506a"}]-> ${galias(tg)}\n`;
+}
 p += "@enduml\n";
 
 fs.writeFileSync(new URL("./ecosystem.puml", import.meta.url), p);
@@ -106,6 +112,5 @@ const encoded = encode(zlib.deflateRawSync(Buffer.from(p, "utf8"), { level: 9 })
 const url = "https://www.plantuml.com/plantuml/svg/" + encoded;
 fs.writeFileSync(new URL("./ecosystem-plantuml-url.txt", import.meta.url), url + "\n");
 
-const crossEdges = seen.size;
-console.log(`puml: ${p.length} chars · cross-subsystem edges: ${crossEdges} · render-url: ${url.length} chars`);
+console.log(`puml: ${p.length} chars · ${data.groups.length} subsystems · ${pair.size} aggregated flows · render-url: ${url.length} chars`);
 console.log(url);

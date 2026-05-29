@@ -278,10 +278,21 @@ Generated from the SAME `ecosystem-data.json` (can't drift). The included genera
 `.puml`, encodes it to a plantuml.com render URL; fetch the SVG once and self-host it;
 `diagram.html` shows it with `svg-pan-zoom`.
 
-**Use the bundled [`gen-diagram.mjs`](./gen-diagram.mjs)** (in this folder) — it is generic:
-packages per subsystem, only the *meaningful* cross-subsystem edges (drops the dense
-`control`/`infra` fan-outs so it's legible, not a hairball), big fonts, dark theme, and the
-exact PlantUML raw-deflate + custom-base64 URL encoding.
+**Use the bundled [`gen-diagram.mjs`](./gen-diagram.mjs)** (in this folder), generic via a
+`PROJECT_TITLE` env var. It renders at the **subsystem altitude**: one box per subsystem that
+*lists its components as text*, with cross-subsystem flows aggregated to one coloured edge per
+directed pair (ranked `payment > bandwidth > sales > auth > data > control`; `infra` dropped).
+
+**Why subsystem-level, not one box per component:** a large system (say 70+ components) drawn
+as one-box-each becomes a wide ribbon whose text shrinks to ~6px when fit to a screen —
+unreadable without zooming. Dozens of labelled boxes simply can't be read at full-fit. The
+subsystem view stays readable on first view (a handful of boxes, portrait shape that fits to
+width and scrolls), still names every component, and leaves the full per-component, zoomable
+detail to the live WebGL map (Artifact A). Set `PROJECT_TITLE`, dark theme, big fonts, exact
+PlantUML raw-deflate + custom-base64 URL encoding all included.
+
+> **Creole gotcha:** keep every `<color>`/`<size>`/`<b>` tag opened AND closed on the SAME
+> line. A span that crosses a `\n` leaks its closing tags as literal text in the render.
 
 ```bash
 node gen-diagram.mjs                                                  # → ecosystem.puml + url file
