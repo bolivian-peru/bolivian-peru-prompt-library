@@ -34,8 +34,8 @@ Every skill here follows two non-negotiable principles:
 
 | Skill | What it does |
 |---|---|
-| [**system-map-visualization**](skills/system-map-visualization/) | Deeply analyzes any codebase, then builds a **live, animated 3D WebGL "system map"** of the whole ecosystem **+ a static PlantUML architecture diagram**, both from one code-verified data file. Real-time telemetry, clickable nodes, guided end-to-end journeys. No backend of its own — one self-contained static HTML file. |
-| [**agentic-chat-interface**](skills/agentic-chat-interface/) | Builds a production-grade **streaming agent chat front-end**: SSE-streamed conversation, live tool-call timeline, collapsible "thinking" panel, stop/retry/abort, graceful failure. Framework-light (React + `fetch` + Streams API + Tailwind) — no chat library, no SSE library. Decoupled from any backend by one 10-event SSE contract. |
+| [**system-map-visualization**](system-map-visualization/) | Deeply analyzes any codebase, then builds a **live, animated 3D WebGL "system map"** of the whole ecosystem **+ a static PlantUML architecture diagram**, both from one code-verified data file. Real-time telemetry, clickable nodes, guided end-to-end journeys. No backend of its own — one self-contained static HTML file. |
+| [**agentic-chat-interface**](agentic-chat-interface/) | Builds a production-grade **streaming agent chat front-end**: SSE-streamed conversation, live tool-call timeline, collapsible "thinking" panel, stop/retry/abort, graceful failure. Framework-light (React + `fetch` + Streams API + Tailwind) — no chat library, no SSE library. Decoupled from any backend by one 10-event SSE contract. |
 
 _More coming. Watch / star the repo._
 
@@ -43,8 +43,8 @@ _More coming. Watch / star the repo._
 
 ## How to use a skill
 
-Each skill is a folder under [`skills/`](skills/) containing a `SKILL.md` (the prompt) plus
-any helper files. Pick whichever path fits your tool:
+Each skill is a top-level folder containing a `SKILL.md` (the prompt) plus any helper files.
+Pick whichever path fits your tool:
 
 **Claude Code / Claude Agent SDK** — drop the skill folder into your project's
 `.claude/skills/` (or `~/.claude/skills/`). Claude discovers it by the `description:` in the

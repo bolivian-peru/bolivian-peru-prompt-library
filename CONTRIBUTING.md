@@ -15,7 +15,7 @@ This library has a high, specific bar. A skill belongs here only if:
 ## Layout
 
 ```
-skills/<skill-name>/
+<skill-name>/                 # a top-level folder in the repo root
 ├── SKILL.md          # Anthropic-format frontmatter (name + description) then the body
 └── <helpers>         # any scripts/templates the skill references
 ```
